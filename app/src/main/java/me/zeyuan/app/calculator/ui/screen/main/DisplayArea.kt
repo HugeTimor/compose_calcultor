@@ -1,4 +1,4 @@
-package me.zeyuan.app.calculator.screen.main
+package me.zeyuan.app.calculator.ui.screen.main
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text

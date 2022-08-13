@@ -8,9 +8,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import me.zeyuan.app.calculator.screen.main.MainScreen
+import me.zeyuan.app.calculator.ui.screen.main.MainScreen
 import me.zeyuan.app.calculator.ui.theme.CalculatorTheme
 
 class MainActivity : ComponentActivity() {
