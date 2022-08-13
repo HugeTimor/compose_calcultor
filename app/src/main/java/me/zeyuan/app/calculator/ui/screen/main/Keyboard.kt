@@ -59,13 +59,13 @@ fun Keyboard(onClick: (Key) -> Unit) {
                 Key("C", KeyType.ACTION),
                 Key("(", KeyType.OPERATOR),
                 Key(")", KeyType.OPERATOR),
-                Key("⁒", KeyType.OPERATOR)
+                Key("÷", KeyType.OPERATOR)
             ),
             listOf(
                 Key("7"),
                 Key("8"),
                 Key("9"),
-                Key("x", KeyType.OPERATOR)
+                Key("×", KeyType.OPERATOR)
             ),
             listOf(
                 Key("4"),

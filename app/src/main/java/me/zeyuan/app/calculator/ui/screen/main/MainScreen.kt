@@ -7,28 +7,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import me.zeyuan.app.calculator.calculate.ExpressionEvaluator
 
 @Composable
 fun MainScreen() {
+    val evaluator = ExpressionEvaluator()
     var expression by remember { mutableStateOf("") }
-    var result by remember { mutableStateOf("") }
+    var console by remember { mutableStateOf("") }
 
     val onInput: (Key) -> Unit = { key ->
         if (key.type == KeyType.NUMBER || key.type == KeyType.OPERATOR) {
-            result += key.content
+            console += key.content
         } else {
             when (key.content) {
                 "C" -> {
-                    result = ""
+                    console = ""
                     expression = ""
                 }
                 "=" -> {
-                    expression = result + "="
-                    result = "0"
+                    expression = "$console="
+                    console = evaluator.evaluate(console)
                 }
                 "<-" -> {
-                    if (result.isNotEmpty()) {
-                        result = result.dropLast(1)
+                    if (console.isNotEmpty()) {
+                        console = console.dropLast(1)
                     }
                 }
             }
@@ -48,7 +50,7 @@ fun MainScreen() {
                 .fillMaxWidth()
                 .weight(5f)
         ) {
-            DisplayArea(expression, result)
+            DisplayArea(expression, console)
         }
         Column(
             modifier = Modifier
