@@ -1,7 +1,11 @@
 package me.zeyuan.app.calculator.ui.screen.main
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.History
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,20 +45,20 @@ fun MainScreen() {
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(1f)
         ) {
             ActionBar()
         }
         Column(
             Modifier
                 .fillMaxWidth()
-                .weight(5f)
+                .weight(1f)
         ) {
             DisplayArea(expression, console)
         }
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalArrangement = Arrangement.Bottom
         ) {
             Keyboard(onInput)
@@ -67,11 +71,22 @@ fun ActionBar() {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(8.dp, 8.dp)
-            .wrapContentWidth(Alignment.End)
+            .padding(16.dp, 16.dp)
     ) {
-        Text(modifier = Modifier.padding(4.dp), text = "历史")
-        Text(modifier = Modifier.padding(4.dp), text = "设置")
+        Icon(
+            Icons.Outlined.Settings,
+            contentDescription = "设置",
+            modifier = Modifier
+                .size(42.dp)
+                .padding(8.dp)
+        )
+        Icon(
+            Icons.Outlined.History,
+            contentDescription = "历史记录",
+            modifier = Modifier
+                .size(42.dp)
+                .padding(8.dp)
+        )
     }
 }
 
