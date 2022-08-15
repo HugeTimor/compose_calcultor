@@ -11,9 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import me.zeyuan.app.calculator.ui.screen.HistoryScreen
 import me.zeyuan.app.calculator.ui.screen.main.MainScreen
+import me.zeyuan.app.calculator.ui.screen.SettingsScreen
 import me.zeyuan.app.calculator.ui.theme.CalculatorTheme
 import me.zeyuan.app.calculator.ui.theme.NavigationBarColor
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +42,21 @@ class MainActivity : ComponentActivity() {
                         ),
                     color = Color.Transparent
                 ) {
-                    MainScreen()
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = "main?expression={expression}"
+                    ) {
+                        composable(
+                            "main?expression={expression}",
+                            arguments = listOf(navArgument("expression") { })
+                        ) { backStackEntry ->
+                            val expression = backStackEntry.arguments?.getString("expression") ?: ""
+                            MainScreen(navController, URLDecoder.decode(expression, "utf-8"))
+                        }
+                        composable("settings") { SettingsScreen(navController) }
+                        composable("history") { HistoryScreen(navController) }
+                    }
                 }
             }
         }
@@ -59,7 +81,8 @@ fun DefaultPreview() {
                 ),
             color = Color.Transparent
         ) {
-            MainScreen()
+            val navController = rememberNavController()
+            MainScreen(navController = navController, replayExpression = "")
         }
     }
 }
