@@ -1,4 +1,4 @@
-package me.zeyuan.app.calculator.ui.screen
+package me.zeyuan.app.calculator.ui.screen.history
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -14,8 +14,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.ContentCopy
+import androidx.compose.material.icons.outlined.HistoryEdu
 import androidx.compose.material.icons.outlined.Replay
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,13 +28,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import me.zeyuan.app.calculator.store.HistoryEntity
+import me.zeyuan.app.calculator.store.HistoryRepositoryImpl
 import java.net.URLEncoder
 
 @Composable
-fun HistoryScreen(navController: NavHostController) {
+fun HistoryScreen(
+    navController: NavHostController,
+    theViewModel: HistoryViewModel
+) {
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -48,13 +57,10 @@ fun HistoryScreen(navController: NavHostController) {
             elevation = 0.dp
         )
     }, content = { padding ->
-        val histories =
-            listOf(
-                HistoryEntity("56+3", "59"),
-                HistoryEntity("56-3", "53"),
-                HistoryEntity("56*3", "53"),
-            )
-        HistoryList(padding, histories, navController)
+        HistoryList(padding, theViewModel.histories, navController)
+        SideEffect {
+            theViewModel.getAllHistories()
+        }
     })
 }
 
@@ -64,9 +70,36 @@ private fun HistoryList(
     histories: List<HistoryEntity>,
     navController: NavHostController
 ) {
-    LazyColumn(contentPadding = padding) {
-        items(histories) { history ->
-            HistoryRow(navController, history)
+    if (histories.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    Icons.Outlined.HistoryEdu,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(72.dp)
+                        .padding(8.dp),
+                    tint = Color.Gray
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "无历史记录", color = Color.Gray)
+            }
+        }
+    } else {
+        LazyColumn(contentPadding = padding) {
+            items(histories) { history ->
+                HistoryRow(navController, history)
+            }
         }
     }
 }
@@ -168,6 +201,14 @@ fun HistoryListPreview() {
             HistoryEntity("56-3", "53"),
             HistoryEntity("56*3", "53"),
         )
+    val navController = rememberNavController()
+    HistoryList(PaddingValues(16.dp, 8.dp), histories, navController)
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HistoryEmptyPreview() {
+    val histories = emptyList<HistoryEntity>()
     val navController = rememberNavController()
     HistoryList(PaddingValues(16.dp, 8.dp), histories, navController)
 }

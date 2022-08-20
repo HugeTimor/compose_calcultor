@@ -14,17 +14,19 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import me.zeyuan.app.calculator.calculate.ExpressionEvaluator
-import me.zeyuan.app.calculator.store.HistoryEntity
-import me.zeyuan.app.calculator.store.getDatabase
-import java.util.*
+import me.zeyuan.app.calculator.store.HistoryRepositoryImpl
+import me.zeyuan.app.calculator.ui.screen.history.HistoryViewModel
+import me.zeyuan.app.calculator.ui.screen.history.HistoryViewModelFactory
 
 @Composable
-fun MainScreen(navController: NavHostController, replayExpression: String? = "") {
+fun MainScreen(
+    navController: NavHostController,
+    replayExpression: String? = "",
+    theViewModel: HistoryViewModel
+) {
     val evaluator = ExpressionEvaluator()
-    var expression by remember { mutableStateOf(replayExpression ?: "") }
-    var console by remember { mutableStateOf("") }
-
-    val context = LocalContext.current
+    var expression by remember { mutableStateOf("") }
+    var console by remember { mutableStateOf(replayExpression ?: "") }
 
     val onInput: (Key) -> Unit = { key ->
         if (key.type == KeyType.NUMBER || key.type == KeyType.OPERATOR) {
@@ -39,13 +41,7 @@ fun MainScreen(navController: NavHostController, replayExpression: String? = "")
                     val expressionDisplay = "$console="
                     val resultDisplay = evaluator.evaluate(console)
 
-                    try {
-                        val historyEntity = HistoryEntity(console, resultDisplay)
-                        //TODO： 异步
-                        getDatabase(context).historyDao().insert(historyEntity)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    theViewModel.storeHistory(console, resultDisplay)
 
                     expression = expressionDisplay
                     console = resultDisplay
@@ -116,5 +112,8 @@ fun ActionBar(navController: NavHostController) {
 @Composable
 fun MainScreenPreview() {
     val navController = rememberNavController()
-    MainScreen(navController, "")
+    val viewModel = HistoryViewModelFactory(
+        HistoryRepositoryImpl.create(LocalContext.current)
+    ).create(HistoryViewModel::class.java)
+    MainScreen(navController, "", viewModel)
 }
